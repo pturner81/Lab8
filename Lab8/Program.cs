@@ -67,8 +67,14 @@ namespace Lab8
                 int.Parse(UserInput1);
                 return (UserInput1);
             }
-            catch (Exception)
+            catch (FormatException e)
             {
+                Console.WriteLine(e.Message);
+                return "0";
+            }
+            catch (Exception f)
+            {
+                Console.WriteLine(f.Message);
                 return "0";
             }
         }
