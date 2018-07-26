@@ -14,68 +14,71 @@ namespace Lab8
             string[] FavoriteFood = { "Food1", "Food2", "Food3", "Food4", "Food5"};
             string[] Hometown = { "Hometown1", "Hometown2", "Hometown3", "Hometown4", "Hometown5"};
 
-            //process
             string UserChoice = "y";
             while (UserChoice == "y" || UserChoice =="yes")
             {
-                Console.WriteLine("Which student would you like to know more about? (enter a number 1-5)");
-                string UserInput = Console.ReadLine();
+                PrintArray(Students);
 
-                UserInput = Validate(UserInput);
+                int x = GetValidIndex();
 
-                while (int.Parse(UserInput) <= 0 || int.Parse(UserInput) >= 6)
-                {
-                    Console.WriteLine("That is not an option- Please enter a valid number/option");
-                    UserInput = Console.ReadLine();
-                    UserInput = Validate(UserInput);
-                }
+                string FoodOrHome = GetValidFoodOrHome(Students, x);
 
-                int x = int.Parse(UserInput);
+                Output(Students, FavoriteFood, Hometown, FoodOrHome, x);
 
-                Console.WriteLine($"That is {Students[x - 1]}. What would you like to know about {Students[x - 1]}? (Favorite Food or Hometown?)");
-                string FoodOrHome = Console.ReadLine();
-                FoodOrHome = ValidateString(FoodOrHome); //Catches Drew's ctrl+Z trick & returns conversion to lowercase
-                FoodOrHome = ValidateFoodHome(FoodOrHome);
-
-
-
-                if (FoodOrHome == "food")
-                {
-                    Console.WriteLine($"{Students[x-1]}'s favorite food is {FavoriteFood[x - 1]}.");
-                }
-                else if (FoodOrHome == "home")
-                {
-                    Console.WriteLine($"{Students[x-1]}'s hometown is {Hometown[x - 1]}.");
-                }
-                else
-                {
-                    Console.WriteLine("Fatal Error"); //Cathes potential logical errors and allows user to restart
-                }
-
-                Console.WriteLine("Would you like to know about someone else? (Type y to open main menu)");
-                UserChoice = Console.ReadLine();
-                UserChoice = ValidateString(UserChoice);
+                UserChoice = ContinueLoop();
+                Console.Clear();
             }
 
             Console.WriteLine("Thanks! Press any key to exit");
             Console.ReadKey();
         }
-        public static string Validate(string UserInput1)
+
+        private static string ContinueLoop()
+        {
+            string UserChoice;
+            Console.WriteLine("Would you like to know about someone else? (Type y to open main menu)");
+            UserChoice = Console.ReadLine();
+            UserChoice = ValidateString(UserChoice);
+            return UserChoice;
+        }
+
+        private static string GetValidFoodOrHome(string[] Students, int x)
+        {
+            Console.WriteLine($"That is {Students[x - 1]}. What would you like to know about {Students[x - 1]}? (Favorite Food or Hometown?)");
+
+            string FoodOrHome = Console.ReadLine();
+
+            FoodOrHome = ValidateString(FoodOrHome); //Catches Drew's ctrl+Z trick & returns conversion to lowercase
+            FoodOrHome = ValidateFoodHome(FoodOrHome);
+            return FoodOrHome;
+        }
+
+        private static int GetValidIndex()
+        {
+            Console.WriteLine("Which student would you like to know more about? (enter a number 1-5)");
+            string UserInput = Console.ReadLine();
+
+            int UserInputVal = Validate(UserInput);
+            int x = IsOption(UserInputVal);
+            return x;
+        }
+
+        public static int Validate(string UserInput1)
         {
             try
             {
                 int.Parse(UserInput1);
-                return (UserInput1);
+                return (int.Parse(UserInput1));
             }
             catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
-                return "0";
+                return 0;
             }
             catch (Exception f)
             {
                 Console.WriteLine(f.Message);
-                return "0";
+                return 0;
             }
         }
         public static string ValidateFoodHome(string UserInput2)
@@ -92,6 +95,21 @@ namespace Lab8
             }
             return "home";
         }
+        public static void Output(string[] stud, string[] food, string[] home, string input, int x)
+        {
+            if (input == "food")
+            {
+                Console.WriteLine($"{stud [x-1]}'s favorite food is {food[x - 1]}.");
+            }
+            else if (input == "home")
+            {
+                Console.WriteLine($"{stud[x - 1]}'s hometown is {home[x - 1]}.");
+            }
+            else
+            {
+                Console.WriteLine("Fatal Error"); //Cathes potential logical errors and allows user to restart
+            }
+        }
                 
         public static string ValidateString(string UserInput)
         {//Catches Hackers
@@ -100,9 +118,32 @@ namespace Lab8
                 UserInput = UserInput.ToLower();
                 return (UserInput);
             }
-            catch (Exception)
+            catch (FormatException e)
             {
+                Console.WriteLine(e.Message);
                 return "0";
+            }
+            catch (Exception f)
+            {
+                Console.WriteLine(f.Message);
+                return "0";
+            }
+        }
+        public static int IsOption(int validatedInput)
+        {
+            while (validatedInput <= 0 || validatedInput >= 6)
+            {
+                Console.WriteLine("That is not an option- Please enter a valid number/option");
+                string UserInput = Console.ReadLine();
+                validatedInput = Validate(UserInput);
+            }
+            return validatedInput;
+        }
+        public static void PrintArray(string[] list)
+        {
+            foreach ( string item in list)
+            {
+                Console.WriteLine(item);
             }
         }
     }
